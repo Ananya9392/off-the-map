@@ -1,5 +1,8 @@
 import streamlit as st
 
+if st.button("⬅ Back"):
+    st.switch_page("pages/home.py")
+
 st.title("🛍 Hidden Market")
 
 st.image("assets/market.jpg")
@@ -12,3 +15,4 @@ traditional jewellery and authentic souvenirs.
 
 st.subheader("Posted By")
 st.write("Ananya")
+

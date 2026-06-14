@@ -1,5 +1,8 @@
 import streamlit as st
 
+if st.button("⬅ Back"):
+    st.switch_page("pages/home.py")
+
 st.title("📍 Butterfly Beach")
 
 st.image("assets/beach.jpg")
@@ -28,3 +31,4 @@ st.write("""
 
 • Wear comfortable shoes
 """)
+
