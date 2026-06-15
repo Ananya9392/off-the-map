@@ -1,114 +1,98 @@
 import streamlit as st
+import base64
 
-if "wishlist" not in st.session_state:
-    st.session_state.wishlist = []
+# -------------------------
+# PAGE CONFIG
+# -------------------------
 
 st.set_page_config(
     page_title="Off The Map",
     page_icon="🗺️",
     layout="wide"
 )
-st.markdown("""
-<style>
 
-[data-testid="stSidebar"]{
-    display:none;
-}
+# -------------------------
+# SESSION STATE
+# -------------------------
 
-</style>
-""", unsafe_allow_html=True)
+if "wishlist" not in st.session_state:
+    st.session_state.wishlist = []
 
-# ======================
-# STYLING
-# ======================
+# -------------------------
+# BACKGROUND
+# -------------------------
 
-st.markdown("""
-<style>
-            
-.glass-card{
-    background:rgba(255,255,255,0.08);
-    backdrop-filter:blur(20px);
-    border:1px solid rgba(255,255,255,0.15);
-    padding:20px;
-    border-radius:25px;
-}       
+def set_bg(image_file):
 
-.stApp{
-    background: linear-gradient(
-        135deg,
-        #0b132b,
-        #1c2541,
-        #3a506b,
-        #5bc0be
-    );
-}
+    with open(image_file, "rb") as f:
+        encoded = base64.b64encode(f.read()).decode()
 
-h1,h2,h3,h4,h5,h6,p,label{
-    color:white !important;
-}
+    st.markdown(
+        f"""
+        <style>
 
-.stButton button{
-    width:100%;
-    border-radius:25px;
-    background:rgba(255,255,255,0.08);
-    border:1px solid rgba(255,255,255,0.15);
-    color:white;
-    transition:0.3s;
-}
+        .stApp {{
+            background-image: url("data:image/jpg;base64,{encoded}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }}
 
-.stButton button:hover{
-    background:#00D4FF;
-    color:black;
-}
+        [data-testid="stSidebar"] {{
+            display:none;
+        }}
 
-.stTextInput input{
-    border-radius:20px;
-    background:rgba(255,255,255,0.08);
-    color:white;
-}
+        h1,h2,h3,h4,h5,h6,p,label {{
+            color:white !important;
+        }}
 
-img{
-    border-radius:20px;
-}
+        .stButton button {{
+            width:100%;
+            border-radius:20px;
+        }}
 
-</style>
-""", unsafe_allow_html=True)
+        img {{
+            border-radius:20px;
+        }}
 
-# ======================
-# LOGO
-# ======================
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+set_bg("assets/mountains.jpg")
+
+# -------------------------
+# TITLE
+# -------------------------
 
 st.markdown("""
-<h1 style='
-text-align:center;
-font-size:70px;
-font-weight:900;
-color:#00D4FF;
-'>
+<h1 style='text-align:center;font-size:70px;'>
 🧭 OFF THE MAP
 </h1>
 """, unsafe_allow_html=True)
 
 st.markdown("""
-<h3 style='text-align:center;color:#D8E2F0;'>
+<h3 style='text-align:center;'>
 Beyond guidebooks. Beyond tourist traps.
 </h3>
 """, unsafe_allow_html=True)
 
-# ======================
-# SEARCH BAR
-# ======================
+# -------------------------
+# SEARCH
+# -------------------------
+
 search = st.text_input(
-    "Search",
-    label_visibility="collapsed",
+    "",
     placeholder="Search hidden gems..."
 )
 
 st.markdown("---")
 
-# ======================
+# -------------------------
 # CATEGORIES
-# ======================
+# -------------------------
 
 c1, c2, c3, c4, c5 = st.columns(5)
 
@@ -129,123 +113,116 @@ with c5:
 
 st.markdown("---")
 
-posts = [
-    {
-        "name": "Butterfly Beach",
-        "location": "Goa",
-        "category": "Beach"
-    },
-    {
-        "name": "Cultural Experience",
-        "location": "Assam",
-        "category": "Culture"
-    },
-    {
-        "name": "Hidden Market",
-        "location": "Ahmedabad",
-        "category": "Shopping"
-    }
-]
+# -------------------------
+# TRENDING
+# -------------------------
 
-
-st.markdown(
-    "<h2 style='color:#FFB84D;'>🔥 Trending Hidden Gems</h2>",
-    unsafe_allow_html=True
-)
-
-# ======================
-# CARDS
-# ======================
+st.subheader("🔥 Trending Hidden Gems")
 
 col1, col2, col3 = st.columns(3)
 
-# ----------------------
-# CARD 1
-# ----------------------
+# ==================================
+# BUTTERFLY BEACH
+# ==================================
 
 with col1:
 
     st.image("assets/beach.jpg")
+
     st.markdown("### 📍 Butterfly Beach")
     st.write("🌊 Hidden Beach")
     st.write("📍 Goa, India")
     st.write("⭐⭐⭐⭐⭐")
 
-    b1, b2, b3 = st.columns(3)
+    a, b, c = st.columns(3)
 
-    with b1:
-        st.button("❤️", key="goa_like")
+    with a:
+        st.button("❤️", key="beach_like")
 
-    with b2:
-        st.button("💬", key="goa_comment")
+    with b:
+        st.button("💬", key="beach_comment")
 
-    with b3:
-        if st.button("🔖", key="goa_save"):
+    with c:
+        if st.button("🔖", key="beach_save"):
+
             if "Butterfly Beach" not in st.session_state.wishlist:
-                st.session_state.wishlist.append("Butterfly Beach")
+                st.session_state.wishlist.append(
+                    "Butterfly Beach"
+                )
 
-    if st.button("View Details", key="goa"):
+    if st.button("View Details", key="beach_details"):
         st.switch_page("pages/Butterfly_Beach.py")
 
-
-# ----------------------
-# CARD 2
-# ----------------------
+# ==================================
+# CULTURAL EXPERIENCE
+# ==================================
 
 with col2:
 
     st.image("assets/culture.jpg")
+
     st.markdown("### 🎭 Cultural Experience")
     st.write("🎉 Traditional Festival")
     st.write("📍 Assam, India")
     st.write("⭐⭐⭐⭐⭐")
 
-    c1, c2, c3 = st.columns(3)
+    a, b, c = st.columns(3)
 
-    with c1:
-        st.button("❤️", key="assam_like")
+    with a:
+        st.button("❤️", key="culture_like")
 
-    with c2:
-        st.button("💬", key="assam_comment")
+    with b:
+        st.button("💬", key="culture_comment")
 
-    with c3:
-        if st.button("🔖", key="assam_save"):
+    with c:
+        if st.button("🔖", key="culture_save"):
+
             if "Cultural Experience" not in st.session_state.wishlist:
-                st.session_state.wishlist.append("Cultural Experience")
+                st.session_state.wishlist.append(
+                    "Cultural Experience"
+                )
 
-    if st.button("View Details", key="culture"):
+    if st.button("View Details", key="culture_details"):
         st.switch_page("pages/Cultural_Experience.py")
 
-
-# ----------------------
-# CARD 3
-# ----------------------
+# ==================================
+# HIDDEN MARKET
+# ==================================
 
 with col3:
 
     st.image("assets/market.jpg")
+
     st.markdown("### 🛍 Hidden Market")
     st.write("🧵 Handmade Products")
     st.write("📍 Ahmedabad, India")
     st.write("⭐⭐⭐⭐")
 
-    m1, m2, m3 = st.columns(3)
+    a, b, c = st.columns(3)
 
-    with m1:
+    with a:
         st.button("❤️", key="market_like")
 
-    with m2:
+    with b:
         st.button("💬", key="market_comment")
 
-    with m3:
+    with c:
         if st.button("🔖", key="market_save"):
-            if "Hidden Market" not in st.session_state.wishlist:
-                st.session_state.wishlist.append("Hidden Market")
 
-    if st.button("View Details", key="market"):
+            if "Hidden Market" not in st.session_state.wishlist:
+                st.session_state.wishlist.append(
+                    "Hidden Market"
+                )
+
+    if st.button("View Details", key="market_details"):
         st.switch_page("pages/Hidden_Market.py")
 
-        st.markdown("---")
+# -------------------------
+# BOTTOM NAVIGATION
+# -------------------------
+
+st.markdown("<br><br>", unsafe_allow_html=True)
+st.markdown("---")
 
 n1, n2, n3, n4 = st.columns(4)
 
@@ -264,11 +241,4 @@ with n3:
 with n4:
     if st.button("📰 Feed"):
         st.switch_page("pages/feed.py")
-        
-
-
-
-
-
-
         

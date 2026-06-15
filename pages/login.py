@@ -1,10 +1,32 @@
 import streamlit as st
+import base64
+
+def set_background():
+
+    with open("assets/background.jpg", "rb") as image:
+        encoded = base64.b64encode(image.read()).decode()
+
+    st.markdown(
+        f"""
+        <style>
+        .stApp {{
+            background-image: url("data:image/jpg;base64,{encoded}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
 
 st.set_page_config(
     page_title="Login",
     page_icon="🧭",
     layout="wide"
 )
+set_background()
 
 # LOGIN TITLE
 
@@ -41,4 +63,6 @@ if st.button("Login / Sign Up"):
     st.session_state["phone"] = phone
 
     st.switch_page("pages/home.py")
+    
+    
     
