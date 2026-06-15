@@ -1,244 +1,258 @@
 import streamlit as st
 import base64
+import json
 
-# -------------------------
+# ==========================
 # PAGE CONFIG
-# -------------------------
+# ==========================
 
 st.set_page_config(
     page_title="Off The Map",
-    page_icon="🗺️",
+    page_icon="🧭",
     layout="wide"
 )
 
-# -------------------------
+# ==========================
 # SESSION STATE
-# -------------------------
+# ==========================
 
 if "wishlist" not in st.session_state:
     st.session_state.wishlist = []
 
-# -------------------------
+if "selected_category" not in st.session_state:
+    st.session_state.selected_category = "All"
+
+# ==========================
+# LOAD POSTS
+# ==========================
+
+with open("data/posts.json", "r") as f:
+    posts = json.load(f)
+
+# ==========================
 # BACKGROUND
-# -------------------------
+# ==========================
 
-def set_bg(image_file):
+with open("assets/mountains.jpg", "rb") as image:
+    encoded = base64.b64encode(image.read()).decode()
 
-    with open(image_file, "rb") as f:
-        encoded = base64.b64encode(f.read()).decode()
+st.markdown(
+    f"""
+    <style>
 
-    st.markdown(
-        f"""
-        <style>
+    .stApp {{
+        background-image:url("data:image/jpg;base64,{encoded}");
+        background-size:cover;
+        background-position:center;
+        background-repeat:no-repeat;
+        background-attachment:fixed;
+    }}
 
-        .stApp {{
-            background-image: url("data:image/jpg;base64,{encoded}");
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-        }}
+    [data-testid="stSidebar"] {{
+        display:none;
+    }}
 
-        [data-testid="stSidebar"] {{
-            display:none;
-        }}
+    h1,h2,h3,h4,h5,h6,p,label {{
+        color:white !important;
+    }}
 
-        h1,h2,h3,h4,h5,h6,p,label {{
-            color:white !important;
-        }}
+    .stButton button {{
+        width:100%;
+        border-radius:15px;
+    }}
 
-        .stButton button {{
-            width:100%;
-            border-radius:20px;
-        }}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
-        img {{
-            border-radius:20px;
-        }}
-
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-
-set_bg("assets/mountains.jpg")
-
-# -------------------------
+# ==========================
 # TITLE
-# -------------------------
+# ==========================
 
-st.markdown("""
-<h1 style='text-align:center;font-size:70px;'>
-🧭 OFF THE MAP
-</h1>
-""", unsafe_allow_html=True)
+st.markdown(
+    """
+    <h1 style='text-align:center;font-size:65px;'>
+    🧭 OFF THE MAP
+    </h1>
+    """,
+    unsafe_allow_html=True
+)
 
-st.markdown("""
-<h3 style='text-align:center;'>
-Beyond guidebooks. Beyond tourist traps.
-</h3>
-""", unsafe_allow_html=True)
-
-# -------------------------
-# SEARCH
-# -------------------------
-
-search = st.text_input(
-    "",
-    placeholder="Search hidden gems..."
+st.markdown(
+    """
+    <h4 style='text-align:center;'>
+    Discover Hidden Gems Around The World
+    </h4>
+    """,
+    unsafe_allow_html=True
 )
 
 st.markdown("---")
 
-# -------------------------
-# CATEGORIES
-# -------------------------
+# ==========================
+# SEARCH
+# ==========================
 
-c1, c2, c3, c4, c5 = st.columns(5)
+search = st.text_input(
+    "",
+    placeholder="🔍 Search hidden gems..."
+)
+
+# ==========================
+# CATEGORY BUTTONS
+# ==========================
+
+c1, c2, c3, c4, c5, c6 = st.columns(6)
 
 with c1:
-    st.button("🏖 Beaches")
+    if st.button("All"):
+        st.session_state.selected_category = "All"
 
 with c2:
-    st.button("🍜 Food")
+    if st.button("🏖 Beach"):
+        st.session_state.selected_category = "Beach"
 
 with c3:
-    st.button("🎭 Culture")
+    if st.button("🍜 Food"):
+        st.session_state.selected_category = "Food"
 
 with c4:
-    st.button("🛍 Shopping")
+    if st.button("🎭 Culture"):
+        st.session_state.selected_category = "Culture"
 
 with c5:
-    st.button("🌿 Nature")
+    if st.button("🛍 Shopping"):
+        st.session_state.selected_category = "Shopping"
+
+with c6:
+    if st.button("🌿 Nature"):
+        st.session_state.selected_category = "Nature"
+
+selected_category = st.session_state.selected_category
 
 st.markdown("---")
 
-# -------------------------
-# TRENDING
-# -------------------------
+# ==========================
+# TRENDING POSTS ONLY
+# ==========================
+
+filtered_posts = []
+
+for post in posts:
+
+    # Skip user uploaded posts
+    if post.get("user_post", False):
+        continue
+
+    search_match = (
+        search.lower() in post["title"].lower()
+        or search.lower() in post["location"].lower()
+    )
+
+    category_match = (
+        selected_category == "All"
+        or post["category"] == selected_category
+    )
+
+    if search_match and category_match:
+        filtered_posts.append(post)
+
+# ==========================
+# TRENDING SECTION
+# ==========================
 
 st.subheader("🔥 Trending Hidden Gems")
 
-col1, col2, col3 = st.columns(3)
+cols = st.columns(3)
 
-# ==================================
-# BUTTERFLY BEACH
-# ==================================
+for index, post in enumerate(filtered_posts):
 
-with col1:
+    with cols[index % 3]:
 
-    st.image("assets/beach.jpg")
+        st.image(
+            post["image"],
+            width=250
+        )
 
-    st.markdown("### 📍 Butterfly Beach")
-    st.write("🌊 Hidden Beach")
-    st.write("📍 Goa, India")
-    st.write("⭐⭐⭐⭐⭐")
+        with st.container():
 
-    a, b, c = st.columns(3)
+            st.markdown(
+                f"""
+                ### {post["title"]}
+                """
+            )
 
-    with a:
-        st.button("❤️", key="beach_like")
+            st.write(f"📍 {post['location']}")
+            st.write(f"🏷 {post['category']}")
+            st.write(post["description"])
 
-    with b:
-        st.button("💬", key="beach_comment")
+        a, b, c = st.columns(3)
 
-    with c:
-        if st.button("🔖", key="beach_save"):
+        with a:
+            st.button(
+                "❤️",
+                key=f"like_{index}"
+            )
 
-            if "Butterfly Beach" not in st.session_state.wishlist:
-                st.session_state.wishlist.append(
-                    "Butterfly Beach"
-                )
+        with b:
+            st.button(
+                "💬",
+                key=f"comment_{index}"
+            )
 
-    if st.button("View Details", key="beach_details"):
-        st.switch_page("pages/Butterfly_Beach.py")
+        with c:
 
-# ==================================
-# CULTURAL EXPERIENCE
-# ==================================
+            if st.button(
+                "🔖",
+                key=f"save_{index}"
+            ):
 
-with col2:
+                exists = False
 
-    st.image("assets/culture.jpg")
+                for item in st.session_state.wishlist:
+                    if item["title"] == post["title"]:
+                        exists = True
 
-    st.markdown("### 🎭 Cultural Experience")
-    st.write("🎉 Traditional Festival")
-    st.write("📍 Assam, India")
-    st.write("⭐⭐⭐⭐⭐")
+                if not exists:
+                    st.session_state.wishlist.append(post)
 
-    a, b, c = st.columns(3)
+        if st.button(
+            "View Details",
+            key=f"details_{index}"
+        ):
 
-    with a:
-        st.button("❤️", key="culture_like")
+            if post["title"] == "Butterfly Beach":
+                st.switch_page("pages/Butterfly_Beach.py")
 
-    with b:
-        st.button("💬", key="culture_comment")
+            elif post["title"] == "Cultural Experience":
+                st.switch_page("pages/Cultural_Experience.py")
 
-    with c:
-        if st.button("🔖", key="culture_save"):
+            elif post["title"] == "Hidden Market":
+                st.switch_page("pages/Hidden_Market.py")
 
-            if "Cultural Experience" not in st.session_state.wishlist:
-                st.session_state.wishlist.append(
-                    "Cultural Experience"
-                )
-
-    if st.button("View Details", key="culture_details"):
-        st.switch_page("pages/Cultural_Experience.py")
-
-# ==================================
-# HIDDEN MARKET
-# ==================================
-
-with col3:
-
-    st.image("assets/market.jpg")
-
-    st.markdown("### 🛍 Hidden Market")
-    st.write("🧵 Handmade Products")
-    st.write("📍 Ahmedabad, India")
-    st.write("⭐⭐⭐⭐")
-
-    a, b, c = st.columns(3)
-
-    with a:
-        st.button("❤️", key="market_like")
-
-    with b:
-        st.button("💬", key="market_comment")
-
-    with c:
-        if st.button("🔖", key="market_save"):
-
-            if "Hidden Market" not in st.session_state.wishlist:
-                st.session_state.wishlist.append(
-                    "Hidden Market"
-                )
-
-    if st.button("View Details", key="market_details"):
-        st.switch_page("pages/Hidden_Market.py")
-
-# -------------------------
+# ==========================
 # BOTTOM NAVIGATION
-# -------------------------
+# ==========================
 
-st.markdown("<br><br>", unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
 st.markdown("---")
 
-n1, n2, n3, n4 = st.columns(4)
+nav1, nav2, nav3, nav4 = st.columns(4)
 
-with n1:
+with nav1:
     if st.button("👤 Profile"):
         st.switch_page("pages/profile.py")
 
-with n2:
+with nav2:
     if st.button("🔖 Wishlist"):
         st.switch_page("pages/wishlist.py")
 
-with n3:
+with nav3:
     if st.button("➕ Post"):
         st.switch_page("pages/add_place.py")
 
-with n4:
+with nav4:
     if st.button("📰 Feed"):
         st.switch_page("pages/feed.py")
         

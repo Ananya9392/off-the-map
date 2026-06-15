@@ -1,5 +1,8 @@
 import streamlit as st
 import base64
+import json
+import os
+from datetime import datetime
 
 st.set_page_config(
     page_title="Add Place",
@@ -7,9 +10,9 @@ st.set_page_config(
     layout="wide"
 )
 
-# =====================
-# BACKGROUND IMAGE
-# =====================
+# ==========================
+# BACKGROUND
+# ==========================
 
 with open("assets/mountains.jpg", "rb") as image:
     encoded = base64.b64encode(image.read()).decode()
@@ -19,11 +22,11 @@ st.markdown(
     <style>
 
     .stApp {{
-        background-image: url("data:image/jpg;base64,{encoded}");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
+        background-image:url("data:image/jpg;base64,{encoded}");
+        background-size:cover;
+        background-position:center;
+        background-repeat:no-repeat;
+        background-attachment:fixed;
     }}
 
     [data-testid="stSidebar"] {{
@@ -35,19 +38,16 @@ st.markdown(
     }}
 
     .form-card {{
-        background: rgba(255,255,255,0.15);
-        backdrop-filter: blur(20px);
-        padding: 25px;
-        border-radius: 25px;
-        border: 1px solid rgba(255,255,255,0.2);
+        background:rgba(255,255,255,0.15);
+        backdrop-filter:blur(20px);
+        padding:25px;
+        border-radius:25px;
+        border:1px solid rgba(255,255,255,0.2);
     }}
 
     .stButton button {{
         width:100%;
-        border-radius:20px;
-        background:rgba(255,255,255,0.15);
-        border:1px solid rgba(255,255,255,0.2);
-        color:white;
+        border-radius:15px;
     }}
 
     </style>
@@ -55,26 +55,38 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# =====================
-# HEADER
-# =====================
+# ==========================
+# USER INFO
+# ==========================
 
-col1, col2 = st.columns([1,8])
+user_name = st.session_state.get(
+    "name",
+    "Guest User"
+)
+
+user_email = st.session_state.get(
+    "email",
+    "unknown@email.com"
+)
+
+# ==========================
+# HEADER
+# ==========================
+
+col1, col2 = st.columns([1, 8])
 
 with col1:
     if st.button("⬅"):
         st.switch_page("pages/home.py")
 
 with col2:
-    st.title("➕ Add Place")
+    st.title("➕ Add Hidden Gem")
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# =====================
+# ==========================
 # FORM
-# =====================
-
-st.markdown('<div class="form-card">', unsafe_allow_html=True)
+# ==========================
 
 place = st.text_input("📍 Place Name")
 
@@ -86,20 +98,81 @@ category = st.selectbox(
 location = st.text_input("📌 Location")
 
 description = st.text_area(
-    "📝 What makes it special?"
-)
-
-rating = st.slider(
-    "⭐ Rating",
-    1,
-    5
+    "📝 Description"
 )
 
 image = st.file_uploader(
-    "📷 Upload Image"
+    "📷 Upload Image",
+    type=["jpg", "jpeg", "png"]
 )
 
-if st.button("🚀 Post"):
-    st.success("Post Uploaded Successfully!")
+# ==========================
+# POST
+# ==========================
 
-st.markdown("</div>", unsafe_allow_html=True)
+if st.button("🚀 Post"):
+
+    if (
+        place.strip() == ""
+        or location.strip() == ""
+        or description.strip() == ""
+        or image is None
+    ):
+
+        st.error("Please fill all fields.")
+
+    else:
+
+        os.makedirs(
+            "assets/uploads",
+            exist_ok=True
+        )
+
+        image_path = (
+            f"assets/uploads/{image.name}"
+        )
+
+        with open(image_path, "wb") as f:
+            f.write(image.getbuffer())
+
+        try:
+            with open(
+                "data/posts.json",
+                "r"
+            ) as f:
+                posts = json.load(f)
+        except:
+            posts = []
+
+        new_post = {
+            "title": place,
+            "category": category,
+            "location": location,
+            "description": description,
+            "image": image_path,
+            "user_post": True,
+            "owner_name": user_name,
+            "owner_email": user_email,
+            "timestamp": datetime.now().strftime(
+                "%d %b %Y %I:%M %p"
+            )
+        }
+
+        posts.append(new_post)
+
+        with open(
+            "data/posts.json",
+            "w"
+        ) as f:
+            json.dump(
+                posts,
+                f,
+                indent=4
+            )
+
+        st.success(
+            "Post uploaded successfully!"
+        )
+
+        st.balloons()
+        

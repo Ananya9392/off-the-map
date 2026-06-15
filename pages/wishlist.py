@@ -7,9 +7,16 @@ st.set_page_config(
     layout="wide"
 )
 
-# =====================
-# BACKGROUND IMAGE
-# =====================
+# ==========================
+# SESSION STATE
+# ==========================
+
+if "wishlist" not in st.session_state:
+    st.session_state.wishlist = []
+
+# ==========================
+# BACKGROUND
+# ==========================
 
 with open("assets/wishlist_bg.jpg", "rb") as image:
     encoded = base64.b64encode(image.read()).decode()
@@ -19,11 +26,11 @@ st.markdown(
     <style>
 
     .stApp {{
-        background-image: url("data:image/jpg;base64,{encoded}");
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
+        background-image:url("data:image/jpg;base64,{encoded}");
+        background-size:cover;
+        background-position:center;
+        background-repeat:no-repeat;
+        background-attachment:fixed;
     }}
 
     [data-testid="stSidebar"] {{
@@ -34,22 +41,9 @@ st.markdown(
         color:white !important;
     }}
 
-    .wishlist-card {{
-        background: rgba(255,255,255,0.15);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(255,255,255,0.2);
-        border-radius: 20px;
-        padding: 20px;
-        margin-bottom: 15px;
-        color: white;
-    }}
-
     .stButton button {{
+        border-radius:15px;
         width:100%;
-        border-radius:20px;
-        background:rgba(255,255,255,0.15);
-        border:1px solid rgba(255,255,255,0.2);
-        color:white;
     }}
 
     </style>
@@ -57,16 +51,9 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# =====================
-# SESSION STATE
-# =====================
-
-if "wishlist" not in st.session_state:
-    st.session_state.wishlist = []
-
-# =====================
+# ==========================
 # HEADER
-# =====================
+# ==========================
 
 col1, col2 = st.columns([1,8])
 
@@ -77,26 +64,49 @@ with col1:
 with col2:
     st.title("🔖 My Wishlist")
 
-st.markdown("<br>", unsafe_allow_html=True)
+st.markdown("---")
 
-# =====================
-# WISHLIST ITEMS
-# =====================
+# ==========================
+# EMPTY WISHLIST
+# ==========================
 
 if len(st.session_state.wishlist) == 0:
 
     st.info("No saved places yet.")
 
+# ==========================
+# WISHLIST POSTS
+# ==========================
+
 else:
 
-    for place in st.session_state.wishlist:
+    cols = st.columns(2)
 
-        st.markdown(
-            f"""
-            <div class="wishlist-card">
-                <h3>📍 {place}</h3>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-        
+    for index, post in enumerate(st.session_state.wishlist):
+
+        with cols[index % 2]:
+
+            st.image(
+                post["image"],
+                width=250
+            )
+
+            st.markdown(
+                f"""
+                ### 📍 {post['title']}
+                """
+            )
+
+            st.write(f"📌 {post['location']}")
+            st.write(f"🏷 {post['category']}")
+            st.write(post['description'])
+
+            if st.button(
+                "❌ Remove",
+                key=f"remove_{index}"
+            ):
+                st.session_state.wishlist.pop(index)
+                st.rerun()
+
+            st.markdown("---")
+            
