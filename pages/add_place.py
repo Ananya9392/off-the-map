@@ -2,6 +2,7 @@ import streamlit as st
 import base64
 import json
 import os
+import uuid
 from datetime import datetime
 
 st.set_page_config(
@@ -66,7 +67,7 @@ user_email = st.session_state.get(
 # HEADER
 # ==========================
 
-col1, col2 = st.columns([1,8])
+col1, col2 = st.columns([1, 8])
 
 with col1:
     if st.button("⬅"):
@@ -78,10 +79,10 @@ with col2:
 st.markdown("<br>", unsafe_allow_html=True)
 
 # ==========================
-# CENTERED FORM
+# FORM
 # ==========================
 
-left, center, right = st.columns([1,2,1])
+left, center, right = st.columns([1, 2, 1])
 
 with center:
 
@@ -162,6 +163,8 @@ with center:
                 posts = []
 
             new_post = {
+
+                "id": str(uuid.uuid4()),
 
                 "title": place,
                 "category": category,

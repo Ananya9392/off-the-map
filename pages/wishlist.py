@@ -1,6 +1,10 @@
 import streamlit as st
 import base64
 
+# ==========================
+# PAGE CONFIG
+# ==========================
+
 st.set_page_config(
     page_title="Bucket List",
     page_icon="🪣",
@@ -18,7 +22,7 @@ if "wishlist" not in st.session_state:
 # BACKGROUND
 # ==========================
 
-with open("assets/background.jpg", "rb") as image:
+with open("assets/bucketlist.jpg", "rb") as image:
     encoded = base64.b64encode(image.read()).decode()
 
 st.markdown(
@@ -37,16 +41,27 @@ st.markdown(
         display:none;
     }}
 
-    h1,h2,h3,h4,h5,h6,p,label {{
+    h1,h2,h3,h4,h5,h6,label {{
         color:white !important;
     }}
 
     .info-card {{
         background:rgba(255,255,255,0.92);
-        padding:18px;
+        padding:20px;
         border-radius:20px;
         margin-top:10px;
-        margin-bottom:10px;
+        margin-bottom:15px;
+        box-shadow:0px 5px 15px rgba(0,0,0,0.2);
+    }}
+
+    .info-card h1,
+    .info-card h2,
+    .info-card h3,
+    .info-card h4,
+    .info-card h5,
+    .info-card h6,
+    .info-card p {{
+        color:black !important;
     }}
 
     .stButton button {{
@@ -85,7 +100,7 @@ if len(st.session_state.wishlist) == 0:
     )
 
 # ==========================
-# POSTS
+# BUCKET LIST POSTS
 # ==========================
 
 else:
@@ -107,19 +122,19 @@ else:
                 f"""
                 <div class="info-card">
 
-                <h3 style="color:black;">
+                <h3>
                 📍 {post['title']}
                 </h3>
 
-                <p style="color:black;">
+                <p>
                 📌 {post['location']}
                 </p>
 
-                <p style="color:black;">
+                <p>
                 🏷 {post['category']}
                 </p>
 
-                <p style="color:black;">
+                <p>
                 {post['description']}
                 </p>
 

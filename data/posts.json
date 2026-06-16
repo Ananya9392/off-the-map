@@ -4,31 +4,20 @@
         "category": "Beach",
         "location": "Goa, India",
         "description": "Hidden Beach",
-        "image": "assets/beach.jpg",
-        "user_post": false
+        "image": "assets/beach.jpg"
     },
     {
         "title": "Cultural Experience",
         "category": "Culture",
         "location": "Assam, India",
         "description": "Traditional Festival",
-        "image": "assets/culture.jpg",
-        "user_post": false
+        "image": "assets/culture.jpg"
     },
     {
         "title": "Hidden Market",
         "category": "Shopping",
         "location": "Ahmedabad, India",
         "description": "Handmade Products",
-        "image": "assets/market.jpg",
-        "user_post": false
-    },
-    {
-        "title": "goa",
-        "category": "Beach",
-        "location": "goa",
-        "description": "its good\n",
-        "image": "assets/uploads/joshua-rondeau-EIeVusiphj4-unsplash.jpg",
-        "user_post": true
+        "image": "assets/market.jpg"
     }
 ]

@@ -2,6 +2,10 @@ import streamlit as st
 import base64
 import json
 
+# ==========================
+# PAGE CONFIG
+# ==========================
+
 st.set_page_config(
     page_title="Profile",
     page_icon="👤",
@@ -23,18 +27,6 @@ def load_posts():
 posts = load_posts()
 
 # ==========================
-# USER POSTS ONLY
-# ==========================
-
-user_posts = []
-
-for post in posts:
-
-    if post.get("user_post", False):
-
-        user_posts.append(post)
-
-# ==========================
 # SESSION STATE
 # ==========================
 
@@ -49,6 +41,25 @@ if "email" not in st.session_state:
 
 if "phone" not in st.session_state:
     st.session_state.phone = ""
+
+# ==========================
+# CURRENT USER POSTS ONLY
+# ==========================
+
+current_user_email = st.session_state.get(
+    "email",
+    ""
+)
+
+user_posts = []
+
+for post in posts:
+
+    if (
+        post.get("user_post", False)
+        and post.get("owner_email", "") == current_user_email
+    ):
+        user_posts.append(post)
 
 # ==========================
 # BACKGROUND
@@ -73,7 +84,7 @@ st.markdown(
         display:none;
     }}
 
-    h1,h2,h3,h4,h5,h6,p,label {{
+    h1,h2,h3,h4,h5,h6,label {{
         color:white !important;
     }}
 
@@ -85,12 +96,25 @@ st.markdown(
         text-align:center;
     }}
 
-    .info-card {{
+    .post-card {{
         background:rgba(255,255,255,0.92);
-        padding:18px;
         border-radius:20px;
+        padding:20px;
         margin-top:10px;
-        margin-bottom:10px;
+        margin-bottom:20px;
+        box-shadow:0px 5px 15px rgba(0,0,0,0.2);
+    }}
+
+    .post-card h1,
+    .post-card h2,
+    .post-card h3,
+    .post-card h4,
+    .post-card h5,
+    .post-card h6,
+    .post-card p,
+    .post-card div,
+    .post-card span {{
+        color:black !important;
     }}
 
     .stButton button {{
@@ -206,21 +230,21 @@ else:
 
         st.markdown(
             f"""
-            <div class="info-card">
+            <div class="post-card">
 
-            <h3 style="color:black;">
+            <h3>
             📍 {post['title']}
             </h3>
 
-            <p style="color:black;">
+            <p>
             📌 {post['location']}
             </p>
 
-            <p style="color:black;">
+            <p>
             🏷 {post['category']}
             </p>
 
-            <p style="color:black;">
+            <p>
             {post['description']}
             </p>
 
@@ -229,6 +253,57 @@ else:
             unsafe_allow_html=True
         )
 
+        if st.button(
+            "🗑 Delete Post",
+            key=f"delete_{post['title']}"
+        ):
+
+            try:
+
+                with open(
+                    "data/posts.json",
+                    "r"
+                ) as f:
+
+                    all_posts = json.load(f)
+
+                updated_posts = []
+
+                for p in all_posts:
+
+                    if (
+                        p.get("owner_email") == current_user_email
+                        and p.get("title") == post["title"]
+                    ):
+                        continue
+
+                    updated_posts.append(p)
+
+                with open(
+                    "data/posts.json",
+                    "w"
+                ) as f:
+
+                    json.dump(
+                        updated_posts,
+                        f,
+                        indent=4
+                    )
+
+                st.cache_data.clear()
+
+                st.success(
+                    "Post deleted successfully!"
+                )
+
+                st.rerun()
+
+            except Exception as e:
+
+                st.error(
+                    f"Error deleting post: {e}"
+                )
+                
 # ==========================
 # LOGOUT
 # ==========================
@@ -242,4 +317,3 @@ if st.button("🚪 Logout"):
     st.switch_page(
         "pages/login.py"
     )
-    

@@ -52,16 +52,21 @@ st.markdown(
         display:none;
     }}
 
-    h1,h2,h3,h4,h5,h6,p,label {{
+    h1,h2,h4,h5,h6,label {{
         color:white !important;
     }}
 
-    .post-info {{
+    .post-card {{
         background:rgba(255,255,255,0.92);
-        padding:20px;
         border-radius:20px;
-        margin-top:10px;
-        margin-bottom:10px;
+        padding:20px;
+        margin-bottom:25px;
+        box-shadow:0px 5px 15px rgba(0,0,0,0.25);
+    }}
+
+    .post-card h3,
+    .post-card p {{
+        color:black !important;
     }}
 
     .stButton button {{
@@ -102,7 +107,7 @@ for index, post in enumerate(reversed(posts)):
 
     st.markdown(
         f"""
-        <div class="post-info">
+        <div class="post-card">
 
         <h3 style="color:black;">
         📍 {post['title']}
@@ -154,6 +159,7 @@ for index, post in enumerate(reversed(posts)):
 
             if not exists:
                 st.session_state.wishlist.append(post)
+
                 st.success(
                     "Added to Bucket List"
                 )
@@ -164,16 +170,19 @@ for index, post in enumerate(reversed(posts)):
     ):
 
         if post["title"] == "Butterfly Beach":
+
             st.switch_page(
                 "pages/Butterfly_Beach.py"
             )
 
         elif post["title"] == "Cultural Experience":
+
             st.switch_page(
                 "pages/Cultural_Experience.py"
             )
 
         elif post["title"] == "Hidden Market":
+
             st.switch_page(
                 "pages/Hidden_Market.py"
             )

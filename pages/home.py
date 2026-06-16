@@ -59,17 +59,26 @@ st.markdown(
         display:none;
     }}
 
-    h1,h2,h3,h4,h5,h6,p,label {{
+    h1,h2,h4,h5,h6,label {{
         color:white !important;
     }}
 
     .info-card {{
         background:rgba(255,255,255,0.92);
         border-radius:20px;
-        padding:18px;
-        margin-top:10px;
+        padding:15px;
         margin-bottom:15px;
-        box-shadow:0px 6px 20px rgba(0,0,0,0.15);
+        box-shadow:0px 5px 15px rgba(0,0,0,0.2);
+    }}
+
+    .info-card h1,
+    .info-card h2,
+    .info-card h3,
+    .info-card h4,
+    .info-card h5,
+    .info-card h6,
+    .info-card p {{
+        color:black !important;
     }}
 
     .stButton button {{
@@ -91,9 +100,9 @@ left, center, right = st.columns([2,1,2])
 with center:
     st.image(
         "assets/logo.jpg",
-        width=250
+        width=220
     )
-    
+
 # ==========================
 # TITLE
 # ==========================
@@ -123,12 +132,13 @@ st.markdown("<br>", unsafe_allow_html=True)
 # ==========================
 
 search = st.text_input(
-    "",
-    placeholder="🔍 Search hidden gems..."
+    "Search",
+    placeholder="🔍 Search hidden gems...",
+    label_visibility="collapsed"
 )
 
 # ==========================
-# TOP NAVIGATION
+# NAVIGATION
 # ==========================
 
 nav1, nav2, nav3, nav4, nav5 = st.columns(5)
@@ -234,11 +244,11 @@ for index, post in enumerate(filtered_posts):
             f"""
             <div class="info-card">
 
-            <h3 style="color:black;">
+            <h3>
             {post['title']}
             </h3>
 
-            <p style="color:black;">
+            <p>
             📍 {post['location']}<br>
             🏷 {post['category']}<br><br>
             {post['description']}
@@ -303,3 +313,4 @@ for index, post in enumerate(filtered_posts):
                 )
 
         st.markdown("<br>", unsafe_allow_html=True)
+        

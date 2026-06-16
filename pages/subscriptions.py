@@ -1,6 +1,10 @@
 import streamlit as st
 import base64
 
+# ==========================
+# PAGE CONFIG
+# ==========================
+
 st.set_page_config(
     page_title="Subscriptions",
     page_icon="💎",
@@ -30,7 +34,7 @@ st.markdown(
         display:none;
     }}
 
-    h1,h2,h3,h4,h5,h6,p,label {{
+    h1,h2,h3,h4,h5,h6,label {{
         color:white !important;
     }}
 
@@ -44,10 +48,23 @@ st.markdown(
         text-align:center;
     }}
 
+    .plan-card h1,
+    .plan-card h2,
+    .plan-card h3,
+    .plan-card h4,
+    .plan-card h5,
+    .plan-card h6,
+    .plan-card p,
+    .plan-card span,
+    .plan-card div {{
+        color:black !important;
+    }}
+
     .price {{
-        color:#008000;
-        font-size:30px;
+        color:#008000 !important;
+        font-size:32px;
         font-weight:bold;
+        margin:10px 0;
     }}
 
     .stButton button {{
@@ -83,7 +100,7 @@ st.markdown(
 st.markdown("---")
 
 # ==========================
-# SHORT TERM
+# SHORT TERM PLANS
 # ==========================
 
 st.subheader("⚡ Short Term Plans")
@@ -95,11 +112,11 @@ with c1:
     st.markdown(
         """
         <div class="plan-card">
-        <h2 style="color:black;">3 Days</h2>
-        <div class="price">₹49</div>
-        <p style="color:black;">
-        Perfect for weekend trips and quick adventures.
-        </p>
+            <h2>3 Days</h2>
+            <div class="price">₹49</div>
+            <p>
+            Perfect for weekend trips and quick adventures.
+            </p>
         </div>
         """,
         unsafe_allow_html=True
@@ -113,11 +130,11 @@ with c2:
     st.markdown(
         """
         <div class="plan-card">
-        <h2 style="color:black;">5 Days</h2>
-        <div class="price">₹79</div>
-        <p style="color:black;">
-        Great for short vacations and city explorations.
-        </p>
+            <h2>5 Days</h2>
+            <div class="price">₹79</div>
+            <p>
+            Great for short vacations and city explorations.
+            </p>
         </div>
         """,
         unsafe_allow_html=True
@@ -131,11 +148,11 @@ with c3:
     st.markdown(
         """
         <div class="plan-card">
-        <h2 style="color:black;">1 Week</h2>
-        <div class="price">₹99</div>
-        <p style="color:black;">
-        Discover more destinations at your own pace.
-        </p>
+            <h2>1 Week</h2>
+            <div class="price">₹99</div>
+            <p>
+            Discover more destinations at your own pace.
+            </p>
         </div>
         """,
         unsafe_allow_html=True
@@ -147,7 +164,7 @@ with c3:
 st.markdown("<br>", unsafe_allow_html=True)
 
 # ==========================
-# LONG TERM
+# LONG TERM PLANS
 # ==========================
 
 st.subheader("🌍 Long Term Plans")
@@ -159,11 +176,11 @@ with c4:
     st.markdown(
         """
         <div class="plan-card">
-        <h2 style="color:black;">1 Month</h2>
-        <div class="price">₹199</div>
-        <p style="color:black;">
-        Perfect for regular travelers.
-        </p>
+            <h2>1 Month</h2>
+            <div class="price">₹199</div>
+            <p>
+            Perfect for regular travelers.
+            </p>
         </div>
         """,
         unsafe_allow_html=True
@@ -177,11 +194,11 @@ with c5:
     st.markdown(
         """
         <div class="plan-card">
-        <h2 style="color:black;">3 Months</h2>
-        <div class="price">₹499</div>
-        <p style="color:black;">
-        Extended access to premium travel content.
-        </p>
+            <h2>3 Months</h2>
+            <div class="price">₹499</div>
+            <p>
+            Extended access to premium travel content.
+            </p>
         </div>
         """,
         unsafe_allow_html=True
@@ -195,11 +212,11 @@ with c6:
     st.markdown(
         """
         <div class="plan-card">
-        <h2 style="color:black;">6 Months</h2>
-        <div class="price">₹899</div>
-        <p style="color:black;">
-        Best value for travel enthusiasts.
-        </p>
+            <h2>6 Months</h2>
+            <div class="price">₹899</div>
+            <p>
+            Best value for travel enthusiasts.
+            </p>
         </div>
         """,
         unsafe_allow_html=True
@@ -213,11 +230,11 @@ with c7:
     st.markdown(
         """
         <div class="plan-card">
-        <h2 style="color:black;">12 Months</h2>
-        <div class="price">₹1499</div>
-        <p style="color:black;">
-        Full-year premium access and exclusive discoveries.
-        </p>
+            <h2>12 Months</h2>
+            <div class="price">₹1499</div>
+            <p>
+            Full-year premium access and exclusive discoveries.
+            </p>
         </div>
         """,
         unsafe_allow_html=True
