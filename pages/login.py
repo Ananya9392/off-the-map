@@ -15,7 +15,7 @@ st.set_page_config(
 # BACKGROUND
 # =========================
 
-with open("assets/mountains.jpg", "rb") as image:
+with open("assets/background.jpg", "rb") as image:
     encoded_bg = base64.b64encode(image.read()).decode()
 
 st.markdown(
@@ -25,39 +25,29 @@ st.markdown(
     .stApp {{
         background-image: url("data:image/jpg;base64,{encoded_bg}");
         background-size: cover;
-        background-position: center;
+        background-position: center center;
         background-repeat: no-repeat;
         background-attachment: fixed;
     }}
 
     [data-testid="stSidebar"] {{
-        display:none;
+        display: none;
     }}
 
-    .login-card {{
-        background: rgba(0,0,0,0.55);
-        backdrop-filter: blur(12px);
-        padding: 35px;
-        border-radius: 25px;
-        max-width: 500px;
-        margin: auto;
-        margin-top: 20px;
-    }}
-
-    h1,h2,h3,h4,h5,h6,p,label {{
-        color:white !important;
+    h1, h2, h3, h4, h5, h6, p, label {{
+        color: white !important;
     }}
 
     .stTextInput input {{
-        border-radius:15px;
+        border-radius: 15px;
     }}
 
     .stButton button {{
-        width:100%;
-        border-radius:15px;
-        height:50px;
-        font-size:18px;
-        font-weight:bold;
+        width: 100%;
+        height: 50px;
+        border-radius: 15px;
+        font-size: 18px;
+        font-weight: bold;
     }}
 
     </style>
@@ -66,15 +56,22 @@ st.markdown(
 )
 
 # =========================
-# LOGO
+# SPACING
 # =========================
 
-st.markdown("<br>", unsafe_allow_html=True)
+st.markdown("<br><br>", unsafe_allow_html=True)
 
-col1, col2, col3 = st.columns([2,2,2])
+# =========================
+# CENTER LOGO
+# =========================
 
-with col2:
-    st.image("assets/logo.png", width=220)
+left, center, right = st.columns([2,1,2])
+
+with center:
+    st.image(
+        "assets/logo.jpg",
+        width=220
+    )
 
 # =========================
 # TITLE
@@ -82,7 +79,7 @@ with col2:
 
 st.markdown(
     """
-    <h1 style='text-align:center;'>
+    <h1 style='text-align:center; font-size:70px;'>
     OFF THE MAP
     </h1>
     """,
@@ -98,37 +95,38 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.markdown("<br>", unsafe_allow_html=True)
+st.markdown("<br><br>", unsafe_allow_html=True)
 
 # =========================
-# LOGIN CARD
+# LOGIN FORM
 # =========================
 
-st.markdown('<div class="login-card">', unsafe_allow_html=True)
+left, center, right = st.columns([2,3,2])
 
-name = st.text_input(
-    "👤 Name",
-    placeholder="Enter your name"
-)
+with center:
 
-email = st.text_input(
-    "📧 Email",
-    placeholder="Enter your email"
-)
+    name = st.text_input(
+        "👤 Name",
+        placeholder="Enter your name"
+    )
 
-phone = st.text_input(
-    "📱 Phone Number",
-    placeholder="Enter your phone number"
-)
+    email = st.text_input(
+        "📧 Email",
+        placeholder="Enter your email"
+    )
 
-st.markdown("<br>", unsafe_allow_html=True)
+    phone = st.text_input(
+        "📱 Phone Number",
+        placeholder="Enter your phone number"
+    )
 
-if st.button("🚀 Login / Sign Up"):
+    st.markdown("<br>", unsafe_allow_html=True)
 
-    st.session_state["name"] = name
-    st.session_state["email"] = email
-    st.session_state["phone"] = phone
+    if st.button("🚀 Login / Sign Up"):
 
-    st.switch_page("pages/home.py")
+        st.session_state["name"] = name
+        st.session_state["email"] = email
+        st.session_state["phone"] = phone
 
-st.markdown("</div>", unsafe_allow_html=True)
+        st.switch_page("pages/home.py")
+        

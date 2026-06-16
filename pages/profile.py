@@ -12,21 +12,27 @@ st.set_page_config(
 # LOAD POSTS
 # ==========================
 
-try:
-    with open("data/posts.json", "r") as f:
-        posts = json.load(f)
-except:
-    posts = []
+@st.cache_data
+def load_posts():
+    try:
+        with open("data/posts.json", "r") as f:
+            return json.load(f)
+    except:
+        return []
+
+posts = load_posts()
 
 # ==========================
-# COUNT USER POSTS ONLY
+# USER POSTS ONLY
 # ==========================
 
-user_posts = 0
+user_posts = []
 
 for post in posts:
+
     if post.get("user_post", False):
-        user_posts += 1
+
+        user_posts.append(post)
 
 # ==========================
 # SESSION STATE
@@ -71,20 +77,20 @@ st.markdown(
         color:white !important;
     }}
 
-    .profile-card {{
-        background:rgba(255,255,255,0.15);
-        backdrop-filter:blur(20px);
-        padding:30px;
-        border-radius:25px;
-        border:1px solid rgba(255,255,255,0.2);
-    }}
-
     .stat-card {{
         background:rgba(255,255,255,0.15);
         backdrop-filter:blur(15px);
         padding:20px;
         border-radius:20px;
         text-align:center;
+    }}
+
+    .info-card {{
+        background:rgba(255,255,255,0.92);
+        padding:18px;
+        border-radius:20px;
+        margin-top:10px;
+        margin-bottom:10px;
     }}
 
     .stButton button {{
@@ -113,19 +119,10 @@ with col2:
 st.markdown("<br>", unsafe_allow_html=True)
 
 # ==========================
-# PROFILE SECTION
+# PROFILE INFO
 # ==========================
 
-st.markdown(
-    """
-    <div class="profile-card">
-    <h2>Personal Information</h2>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-st.markdown("<br>", unsafe_allow_html=True)
+st.subheader("Personal Information")
 
 name = st.text_input(
     "👤 Name",
@@ -148,7 +145,9 @@ if st.button("💾 Save Changes"):
     st.session_state.email = email
     st.session_state.phone = phone
 
-    st.success("Profile Updated Successfully!")
+    st.success(
+        "Profile Updated Successfully!"
+    )
 
 st.markdown("<br>", unsafe_allow_html=True)
 
@@ -164,7 +163,7 @@ with c1:
         f"""
         <div class="stat-card">
         <h2>{len(st.session_state.wishlist)}</h2>
-        <p>Saved Places</p>
+        <p>Bucket List</p>
         </div>
         """,
         unsafe_allow_html=True
@@ -175,7 +174,7 @@ with c2:
     st.markdown(
         f"""
         <div class="stat-card">
-        <h2>{user_posts}</h2>
+        <h2>{len(user_posts)}</h2>
         <p>Your Posts</p>
         </div>
         """,
@@ -185,36 +184,62 @@ with c2:
 st.markdown("<br>", unsafe_allow_html=True)
 
 # ==========================
-# RECENT USER POSTS
+# USER POSTS
 # ==========================
 
-st.subheader("📝 Your Posts")
+st.subheader("📝 Your Uploaded Posts")
 
-found = False
+if len(user_posts) == 0:
 
-for post in posts:
+    st.info(
+        "You haven't uploaded any posts yet."
+    )
 
-    if post.get("user_post", False):
+else:
 
-        found = True
+    for post in reversed(user_posts):
 
-        st.write(f"📍 {post['title']}")
-        st.write(f"📌 {post['location']}")
-        st.write(f"🏷 {post['category']}")
-        st.markdown("---")
+        st.image(
+            post["image"],
+            width=220
+        )
 
-if not found:
-    st.info("You haven't uploaded any posts yet.")
+        st.markdown(
+            f"""
+            <div class="info-card">
 
-st.markdown("<br>", unsafe_allow_html=True)
+            <h3 style="color:black;">
+            📍 {post['title']}
+            </h3>
+
+            <p style="color:black;">
+            📌 {post['location']}
+            </p>
+
+            <p style="color:black;">
+            🏷 {post['category']}
+            </p>
+
+            <p style="color:black;">
+            {post['description']}
+            </p>
+
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
 # ==========================
 # LOGOUT
 # ==========================
 
+st.markdown("<br>", unsafe_allow_html=True)
+
 if st.button("🚪 Logout"):
 
     st.session_state.clear()
 
-    st.switch_page("pages/login.py")
+    st.switch_page(
+        "pages/login.py"
+    )
     

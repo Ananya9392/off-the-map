@@ -14,7 +14,7 @@ st.set_page_config(
 # BACKGROUND
 # ==========================
 
-with open("assets/mountains.jpg", "rb") as image:
+with open("assets/background.jpg", "rb") as image:
     encoded = base64.b64encode(image.read()).decode()
 
 st.markdown(
@@ -37,17 +37,10 @@ st.markdown(
         color:white !important;
     }}
 
-    .form-card {{
-        background:rgba(255,255,255,0.15);
-        backdrop-filter:blur(20px);
-        padding:25px;
-        border-radius:25px;
-        border:1px solid rgba(255,255,255,0.2);
-    }}
-
     .stButton button {{
         width:100%;
         border-radius:15px;
+        height:50px;
     }}
 
     </style>
@@ -73,7 +66,7 @@ user_email = st.session_state.get(
 # HEADER
 # ==========================
 
-col1, col2 = st.columns([1, 8])
+col1, col2 = st.columns([1,8])
 
 with col1:
     if st.button("⬅"):
@@ -85,94 +78,127 @@ with col2:
 st.markdown("<br>", unsafe_allow_html=True)
 
 # ==========================
-# FORM
+# CENTERED FORM
 # ==========================
 
-place = st.text_input("📍 Place Name")
+left, center, right = st.columns([1,2,1])
 
-category = st.selectbox(
-    "🏷 Category",
-    ["Beach", "Food", "Culture", "Shopping", "Nature"]
-)
+with center:
 
-location = st.text_input("📌 Location")
+    place = st.text_input(
+        "📍 Place Name"
+    )
 
-description = st.text_area(
-    "📝 Description"
-)
+    category = st.selectbox(
+        "🏷 Category",
+        [
+            "Beach",
+            "Food",
+            "Culture",
+            "Shopping",
+            "Nature"
+        ]
+    )
 
-image = st.file_uploader(
-    "📷 Upload Image",
-    type=["jpg", "jpeg", "png"]
-)
+    location = st.text_input(
+        "📌 Location"
+    )
 
-# ==========================
-# POST
-# ==========================
+    description = st.text_area(
+        "📝 Description"
+    )
 
-if st.button("🚀 Post"):
+    image = st.file_uploader(
+        "📷 Upload Image",
+        type=["jpg", "jpeg", "png"]
+    )
 
-    if (
-        place.strip() == ""
-        or location.strip() == ""
-        or description.strip() == ""
-        or image is None
-    ):
+    st.markdown("<br>", unsafe_allow_html=True)
 
-        st.error("Please fill all fields.")
+    if st.button("🚀 Post Hidden Gem"):
 
-    else:
+        if (
+            place.strip() == ""
+            or location.strip() == ""
+            or description.strip() == ""
+            or image is None
+        ):
 
-        os.makedirs(
-            "assets/uploads",
-            exist_ok=True
-        )
+            st.error(
+                "Please complete all fields."
+            )
 
-        image_path = (
-            f"assets/uploads/{image.name}"
-        )
+        else:
 
-        with open(image_path, "wb") as f:
-            f.write(image.getbuffer())
+            os.makedirs(
+                "assets/uploads",
+                exist_ok=True
+            )
 
-        try:
+            image_path = (
+                f"assets/uploads/{image.name}"
+            )
+
+            with open(
+                image_path,
+                "wb"
+            ) as f:
+
+                f.write(
+                    image.getbuffer()
+                )
+
+            try:
+
+                with open(
+                    "data/posts.json",
+                    "r"
+                ) as f:
+
+                    posts = json.load(f)
+
+            except:
+
+                posts = []
+
+            new_post = {
+
+                "title": place,
+                "category": category,
+                "location": location,
+                "description": description,
+                "image": image_path,
+
+                "user_post": True,
+
+                "owner_name": user_name,
+                "owner_email": user_email,
+
+                "timestamp": datetime.now().strftime(
+                    "%d %b %Y %I:%M %p"
+                )
+            }
+
+            posts.append(new_post)
+
             with open(
                 "data/posts.json",
-                "r"
+                "w"
             ) as f:
-                posts = json.load(f)
-        except:
-            posts = []
 
-        new_post = {
-            "title": place,
-            "category": category,
-            "location": location,
-            "description": description,
-            "image": image_path,
-            "user_post": True,
-            "owner_name": user_name,
-            "owner_email": user_email,
-            "timestamp": datetime.now().strftime(
-                "%d %b %Y %I:%M %p"
-            )
-        }
+                json.dump(
+                    posts,
+                    f,
+                    indent=4
+                )
 
-        posts.append(new_post)
-
-        with open(
-            "data/posts.json",
-            "w"
-        ) as f:
-            json.dump(
-                posts,
-                f,
-                indent=4
+            st.success(
+                "Hidden Gem Uploaded Successfully!"
             )
 
-        st.success(
-            "Post uploaded successfully!"
-        )
+            st.balloons()
 
-        st.balloons()
-        
+            st.switch_page(
+                "pages/feed.py"
+            )
+            

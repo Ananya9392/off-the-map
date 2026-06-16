@@ -19,17 +19,21 @@ if "wishlist" not in st.session_state:
 # LOAD POSTS
 # ==========================
 
-try:
-    with open("data/posts.json", "r") as f:
-        posts = json.load(f)
-except:
-    posts = []
+@st.cache_data
+def load_posts():
+    try:
+        with open("data/posts.json", "r") as f:
+            return json.load(f)
+    except:
+        return []
+
+posts = load_posts()
 
 # ==========================
 # BACKGROUND
 # ==========================
 
-with open("assets/mountains.jpg", "rb") as image:
+with open("assets/background.jpg", "rb") as image:
     encoded = base64.b64encode(image.read()).decode()
 
 st.markdown(
@@ -50,6 +54,14 @@ st.markdown(
 
     h1,h2,h3,h4,h5,h6,p,label {{
         color:white !important;
+    }}
+
+    .post-info {{
+        background:rgba(255,255,255,0.92);
+        padding:20px;
+        border-radius:20px;
+        margin-top:10px;
+        margin-bottom:10px;
     }}
 
     .stButton button {{
@@ -78,27 +90,40 @@ with col2:
 st.markdown("---")
 
 # ==========================
-# INSTAGRAM STYLE FEED
+# POSTS
 # ==========================
 
 for index, post in enumerate(reversed(posts)):
 
-    st.markdown(
-        f"""
-        ### 📍 {post['title']}
-        """
-    )
-
-    st.caption(
-        f"📌 {post['location']} • 🏷 {post['category']}"
-    )
-
     st.image(
         post["image"],
-        width=450
+        width=350
     )
 
-    st.write(post["description"])
+    st.markdown(
+        f"""
+        <div class="post-info">
+
+        <h3 style="color:black;">
+        📍 {post['title']}
+        </h3>
+
+        <p style="color:black;">
+        📌 {post['location']}
+        </p>
+
+        <p style="color:black;">
+        🏷 {post['category']}
+        </p>
+
+        <p style="color:black;">
+        {post['description']}
+        </p>
+
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
     a, b, c = st.columns(3)
 
@@ -117,7 +142,7 @@ for index, post in enumerate(reversed(posts)):
     with c:
 
         if st.button(
-            "🔖",
+            "🪣",
             key=f"save_{index}"
         ):
 
@@ -129,7 +154,29 @@ for index, post in enumerate(reversed(posts)):
 
             if not exists:
                 st.session_state.wishlist.append(post)
-                st.success("Added to Wishlist")
+                st.success(
+                    "Added to Bucket List"
+                )
+
+    if st.button(
+        "View Details",
+        key=f"details_{index}"
+    ):
+
+        if post["title"] == "Butterfly Beach":
+            st.switch_page(
+                "pages/Butterfly_Beach.py"
+            )
+
+        elif post["title"] == "Cultural Experience":
+            st.switch_page(
+                "pages/Cultural_Experience.py"
+            )
+
+        elif post["title"] == "Hidden Market":
+            st.switch_page(
+                "pages/Hidden_Market.py"
+            )
 
     st.markdown("---")
     

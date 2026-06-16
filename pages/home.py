@@ -26,14 +26,21 @@ if "selected_category" not in st.session_state:
 # LOAD POSTS
 # ==========================
 
-with open("data/posts.json", "r") as f:
-    posts = json.load(f)
+@st.cache_data
+def load_posts():
+    try:
+        with open("data/posts.json", "r") as f:
+            return json.load(f)
+    except:
+        return []
+
+posts = load_posts()
 
 # ==========================
 # BACKGROUND
 # ==========================
 
-with open("assets/mountains.jpg", "rb") as image:
+with open("assets/background.jpg", "rb") as image:
     encoded = base64.b64encode(image.read()).decode()
 
 st.markdown(
@@ -56,6 +63,15 @@ st.markdown(
         color:white !important;
     }}
 
+    .info-card {{
+        background:rgba(255,255,255,0.92);
+        border-radius:20px;
+        padding:18px;
+        margin-top:10px;
+        margin-bottom:15px;
+        box-shadow:0px 6px 20px rgba(0,0,0,0.15);
+    }}
+
     .stButton button {{
         width:100%;
         border-radius:15px;
@@ -67,13 +83,25 @@ st.markdown(
 )
 
 # ==========================
+# LOGO
+# ==========================
+
+left, center, right = st.columns([2,1,2])
+
+with center:
+    st.image(
+        "assets/logo.jpg",
+        width=250
+    )
+    
+# ==========================
 # TITLE
 # ==========================
 
 st.markdown(
     """
-    <h1 style='text-align:center;font-size:65px;'>
-    🧭 OFF THE MAP
+    <h1 style='text-align:center;'>
+    OFF THE MAP
     </h1>
     """,
     unsafe_allow_html=True
@@ -88,7 +116,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.markdown("---")
+st.markdown("<br>", unsafe_allow_html=True)
 
 # ==========================
 # SEARCH
@@ -100,7 +128,35 @@ search = st.text_input(
 )
 
 # ==========================
-# CATEGORY BUTTONS
+# TOP NAVIGATION
+# ==========================
+
+nav1, nav2, nav3, nav4, nav5 = st.columns(5)
+
+with nav1:
+    if st.button("👤 Profile"):
+        st.switch_page("pages/profile.py")
+
+with nav2:
+    if st.button("🪣 Bucket List"):
+        st.switch_page("pages/wishlist.py")
+
+with nav3:
+    if st.button("➕ Post"):
+        st.switch_page("pages/add_place.py")
+
+with nav4:
+    if st.button("📰 Feed"):
+        st.switch_page("pages/feed.py")
+
+with nav5:
+    if st.button("💎 Subscriptions"):
+        st.switch_page("pages/subscriptions.py")
+
+st.markdown("---")
+
+# ==========================
+# CATEGORY FILTERS
 # ==========================
 
 c1, c2, c3, c4, c5, c6 = st.columns(6)
@@ -134,14 +190,13 @@ selected_category = st.session_state.selected_category
 st.markdown("---")
 
 # ==========================
-# TRENDING POSTS ONLY
+# FILTER POSTS
 # ==========================
 
 filtered_posts = []
 
 for post in posts:
 
-    # Skip user uploaded posts
     if post.get("user_post", False):
         continue
 
@@ -172,20 +227,27 @@ for index, post in enumerate(filtered_posts):
 
         st.image(
             post["image"],
-            width=250
+            width=180
         )
 
-        with st.container():
+        st.markdown(
+            f"""
+            <div class="info-card">
 
-            st.markdown(
-                f"""
-                ### {post["title"]}
-                """
-            )
+            <h3 style="color:black;">
+            {post['title']}
+            </h3>
 
-            st.write(f"📍 {post['location']}")
-            st.write(f"🏷 {post['category']}")
-            st.write(post["description"])
+            <p style="color:black;">
+            📍 {post['location']}<br>
+            🏷 {post['category']}<br><br>
+            {post['description']}
+            </p>
+
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
         a, b, c = st.columns(3)
 
@@ -204,7 +266,7 @@ for index, post in enumerate(filtered_posts):
         with c:
 
             if st.button(
-                "🔖",
+                "🪣",
                 key=f"save_{index}"
             ):
 
@@ -216,6 +278,9 @@ for index, post in enumerate(filtered_posts):
 
                 if not exists:
                     st.session_state.wishlist.append(post)
+                    st.success(
+                        "Added to Bucket List"
+                    )
 
         if st.button(
             "View Details",
@@ -223,36 +288,18 @@ for index, post in enumerate(filtered_posts):
         ):
 
             if post["title"] == "Butterfly Beach":
-                st.switch_page("pages/Butterfly_Beach.py")
+                st.switch_page(
+                    "pages/Butterfly_Beach.py"
+                )
 
             elif post["title"] == "Cultural Experience":
-                st.switch_page("pages/Cultural_Experience.py")
+                st.switch_page(
+                    "pages/Cultural_Experience.py"
+                )
 
             elif post["title"] == "Hidden Market":
-                st.switch_page("pages/Hidden_Market.py")
+                st.switch_page(
+                    "pages/Hidden_Market.py"
+                )
 
-# ==========================
-# BOTTOM NAVIGATION
-# ==========================
-
-st.markdown("<br>", unsafe_allow_html=True)
-st.markdown("---")
-
-nav1, nav2, nav3, nav4 = st.columns(4)
-
-with nav1:
-    if st.button("👤 Profile"):
-        st.switch_page("pages/profile.py")
-
-with nav2:
-    if st.button("🔖 Wishlist"):
-        st.switch_page("pages/wishlist.py")
-
-with nav3:
-    if st.button("➕ Post"):
-        st.switch_page("pages/add_place.py")
-
-with nav4:
-    if st.button("📰 Feed"):
-        st.switch_page("pages/feed.py")
-        
+        st.markdown("<br>", unsafe_allow_html=True)

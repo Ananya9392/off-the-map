@@ -2,8 +2,8 @@ import streamlit as st
 import base64
 
 st.set_page_config(
-    page_title="Wishlist",
-    page_icon="🔖",
+    page_title="Bucket List",
+    page_icon="🪣",
     layout="wide"
 )
 
@@ -18,7 +18,7 @@ if "wishlist" not in st.session_state:
 # BACKGROUND
 # ==========================
 
-with open("assets/wishlist_bg.jpg", "rb") as image:
+with open("assets/background.jpg", "rb") as image:
     encoded = base64.b64encode(image.read()).decode()
 
 st.markdown(
@@ -41,9 +41,17 @@ st.markdown(
         color:white !important;
     }}
 
+    .info-card {{
+        background:rgba(255,255,255,0.92);
+        padding:18px;
+        border-radius:20px;
+        margin-top:10px;
+        margin-bottom:10px;
+    }}
+
     .stButton button {{
-        border-radius:15px;
         width:100%;
+        border-radius:15px;
     }}
 
     </style>
@@ -62,44 +70,63 @@ with col1:
         st.switch_page("pages/home.py")
 
 with col2:
-    st.title("🔖 My Wishlist")
+    st.title("🪣 My Bucket List")
 
 st.markdown("---")
 
 # ==========================
-# EMPTY WISHLIST
+# EMPTY LIST
 # ==========================
 
 if len(st.session_state.wishlist) == 0:
 
-    st.info("No saved places yet.")
+    st.info(
+        "No places added to your Bucket List yet."
+    )
 
 # ==========================
-# WISHLIST POSTS
+# POSTS
 # ==========================
 
 else:
 
     cols = st.columns(2)
 
-    for index, post in enumerate(st.session_state.wishlist):
+    for index, post in enumerate(
+        st.session_state.wishlist
+    ):
 
         with cols[index % 2]:
 
             st.image(
                 post["image"],
-                width=250
+                width=220
             )
 
             st.markdown(
                 f"""
-                ### 📍 {post['title']}
-                """
-            )
+                <div class="info-card">
 
-            st.write(f"📌 {post['location']}")
-            st.write(f"🏷 {post['category']}")
-            st.write(post['description'])
+                <h3 style="color:black;">
+                📍 {post['title']}
+                </h3>
+
+                <p style="color:black;">
+                📌 {post['location']}
+                </p>
+
+                <p style="color:black;">
+                🏷 {post['category']}
+                </p>
+
+                <p style="color:black;">
+                {post['description']}
+                </p>
+
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
             if st.button(
                 "❌ Remove",
@@ -108,5 +135,5 @@ else:
                 st.session_state.wishlist.pop(index)
                 st.rerun()
 
-            st.markdown("---")
+            st.markdown("<br>", unsafe_allow_html=True)
             
